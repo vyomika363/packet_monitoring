@@ -44,6 +44,8 @@ sudo apt install clang llvm libelf-dev
 # For Arch Linux
 sudo pacman -Syu python-bcc
 # Running the CLI
+git clone https://github.com/vyomika363/packet_monitoring
+
 sudo python3 packet_monitoring_cli.py
 
 # Running the dashboard

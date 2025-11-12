@@ -1,0 +1,5 @@
+flask
+flask-socketio
+python-socketio
+bcc==0.29.0
+eventlet==0.33.3

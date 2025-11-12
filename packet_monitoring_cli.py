@@ -141,7 +141,66 @@ TRACEPOINT_PROBE(net, net_dev_xmit) {
     return 0;
 }
 """
+# Without reason support
+PROG_NO_REASON = COMMON_C + r"""
+TRACEPOINT_PROBE(skb, kfree_skb) {
+    struct packet_event data = {};
+    struct sk_buff *skb = (struct sk_buff *)args->skbaddr;
+    if (!skb) return 0;
 
+    data.timestamp = bpf_ktime_get_ns();
+    data.pid = bpf_get_current_pid_tgid() >> 32;
+    bpf_get_current_comm(&data.comm, sizeof(data.comm));
+
+    if (skb->dev)
+        bpf_probe_read_kernel_str(&data.ifname, sizeof(data.ifname), skb->dev->name);
+    else
+        set_reason(data.ifname, "unknown", 7);
+
+    if (skb->protocol == htons(ETH_P_IP)) {
+        struct iphdr iph = {};
+        if (bpf_probe_read_kernel(&iph, sizeof(iph), skb->head + skb->network_header) == 0) {
+            data.saddr = iph.saddr;
+            data.daddr = iph.daddr;
+            data.protocol = iph.protocol;
+
+            if (data.protocol == IPPROTO_TCP) {
+                struct tcphdr tcph = {};
+                if (bpf_probe_read_kernel(&tcph, sizeof(tcph), skb->head + skb->transport_header) == 0) {
+                    data.sport = tcph.source;
+                    data.dport = tcph.dest;
+                }
+            } else if (data.protocol == IPPROTO_UDP) {
+                struct udphdr udph = {};
+                if (bpf_probe_read_kernel(&udph, sizeof(udph), skb->head + skb->transport_header) == 0) {
+                    data.sport = udph.source;
+                    data.dport = udph.dest;
+                }
+            }
+        }
+    }
+
+    data.len = skb->len;
+    data.drop_reason = 0;
+    set_reason(data.reason, "kfree_skb", 10);
+    events.perf_submit(args, &data, sizeof(data));
+    return 0;
+}
+
+TRACEPOINT_PROBE(net, net_dev_xmit) {
+    if (args->rc == 0)
+        return 0;
+    struct packet_event data = {};
+    data.timestamp = bpf_ktime_get_ns();
+    data.pid = bpf_get_current_pid_tgid() >> 32;
+    bpf_get_current_comm(&data.comm, sizeof(data.comm));
+    set_reason(data.ifname, "net_dev_xmit", 13);
+    set_reason(data.reason, "transmit_failed", 16);
+    data.drop_reason = 0;
+    events.perf_submit(args, &data, sizeof(data));
+    return 0;
+}
+"""
 
 class Data(ct.Structure):
     _fields_ = [

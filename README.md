@@ -43,6 +43,8 @@ sudo apt install clang llvm libelf-dev
 
 # For Arch Linux
 sudo pacman -Syu python-bcc
+
+sudo apt install clang llvm
 # Running the CLI
 git clone https://github.com/vyomika363/packet_monitoring
 

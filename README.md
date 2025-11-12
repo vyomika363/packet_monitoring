@@ -17,9 +17,13 @@ source cnenv/bin/activate
 
 # Install Python packages
 pip install flask==3.0.0
+
 pip install flask-socketio==5.3.5
+
 pip install python-socketio==5.10.0
+
 pip install numba pytest
+
 pip install bcc
 
 # Install eBPF / BCC dependencies

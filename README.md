@@ -55,9 +55,12 @@ sudo python3 app.py
 
 # Analysis
 sudo python3 analyze_drops.py
+
 (Give file access and make it in readable format if needed)
 
 cd ~/Desktop/packet_monitoring
+
 sudo chown -R $USER:$USER .
+
 chmod -R 755 plots
 

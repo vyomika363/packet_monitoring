@@ -255,7 +255,7 @@ def print_event(cpu, data, size):
     print(log_line, flush=True)
 
     try:
-        with open(OUTPUT_FILE, "w") as f:
+        with open(OUTPUT_FILE, "a") as f:
             f.write(log_line)
     except Exception:
         pass

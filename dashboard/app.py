@@ -112,7 +112,7 @@ def parse_event_line(line):
 def monitor_packets():
     """Run CLI tool in background and stream parsed data to dashboard."""
     global monitor_running, monitor_process
-    cmd = ["sudo", "python3", "-u", "../packet_monitoring_cli.py"]
+    cmd = ["python3", "-u", "../packet_monitoring_cli.py"]
     env = os.environ.copy()
     env["PYTHONUNBUFFERED"] = "1"
 
@@ -125,7 +125,7 @@ def monitor_packets():
         env=env
     )
 
-    print("[INFO] CLI started, waiting for packets...")
+    print("[INFO] CLI started, waiting for packets")
 
     while monitor_running and monitor_process.poll() is None:
         line = monitor_process.stdout.readline()

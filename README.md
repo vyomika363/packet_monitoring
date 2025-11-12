@@ -49,4 +49,4 @@ sudo python3 packet_monitoring_cli.py
 # Running the dashboard
 sudo python3 app.py
 
-python3 analyze_drops.py
+sudo python3 analyze_drops.py

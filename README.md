@@ -1,6 +1,6 @@
 # Packet Monitor
 
-eBPF-based packet monitoring tool with web dashboard
+eBPF-based packet monitoring tool with CLI and web dashboard, makes use of kfree_skb and net_dev_xmit tracepoints
 
 Setup Instructions
 
